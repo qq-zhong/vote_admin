@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import CountSection from './components/CountSection';
-import ArrayCopy from './components/ArrayCopy';
-import Choices from './components/Choices';
 
 interface Choice {
     label: string;
@@ -13,7 +10,7 @@ function App() {
     
     const [choices, setChoices] = useState<Choice[]>(Array(12).fill({ label: '', enabled: false }));
     const [ws, setWs] = useState<WebSocket | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
+    // const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
     // const ws = new WebSocket("ws://localhost:8080?role=admin");
     // let ws;
@@ -74,7 +71,7 @@ function App() {
         socket.onclose = () => {
             console.log("WebSocket connection closed.");
             reconnect(); // Try to reconnect
-            setIsLoggedIn(false);
+            // setIsLoggedIn(false);
         };
 
         setWs(socket);
