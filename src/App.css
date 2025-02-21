@@ -1,0 +1,31 @@
+.container {
+  padding: 20px;
+}
+
+.choice-container {
+  margin-bottom: 10px;
+}
+
+.text-input {
+  margin-right: 10px;
+  padding: 5px;
+}
+
+.checkbox {
+  cursor: pointer;
+}
+
+.update-button {
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  /* background-color: #007bff; */
+  background-color: #f40b0b;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.update-button:hover {
+  background-color: #0056b3;
+}
