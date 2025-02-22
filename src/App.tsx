@@ -22,7 +22,10 @@ function App() {
         console.log("App component rendered");
         
         const serverAddress = "wss://peterzhong.ca:2096?role=admin"
-        const socket = new WebSocket(serverAddress);
+        // const socket = new WebSocket(serverAddress);
+        const cookie = encodeURIComponent(document.cookie);
+        const socket = new WebSocket(`wss://peterzhong.ca:2096?role=admin&cookie=${cookie}`);
+
         let userID = getCookie("userID");
 
         socket.onopen = () => {
