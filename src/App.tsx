@@ -10,6 +10,7 @@ function App() {
     
     const [choices, setChoices] = useState<Choice[]>(Array(12).fill({ label: '', enabled: false }));
     const [ws, setWs] = useState<WebSocket | null>(null);
+    const [voteTime, setVoteTime] = useState<number | "">(30);
     // const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
     // const ws = new WebSocket("ws://localhost:8080?role=admin");
@@ -109,6 +110,18 @@ function App() {
     //         ws.send(JSON.stringify({ type: 'clear_database' }));
     //     }
     // };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        
+        // Allow blank input
+        if (value === "") {
+            setVoteTime("");
+            console.log("Input is blank");
+        } else {
+            setVoteTime(Number(value));
+            console.log("Vote time set to:", Number(value));
+        }
+    };
 
     // Send updated choices to WebSocket server
     const updateChoices = () => {
@@ -127,6 +140,21 @@ function App() {
     const alertUsers = (message: string) => {
         if (ws) {
             ws.send(JSON.stringify({ type: 'alert', message: message }));
+        }
+    };
+
+    const stopVote = () => {
+        console.log("STOP!")
+        // const inputElement = document.getElementById("numericInput");
+        // const inputValue = voteTime; // Gets the input value as a string
+        if (voteTime == ""){
+            console.log("infinite time")
+        }
+        else {
+            console.log("time given is :", voteTime);
+        }
+        if (ws) {
+            ws.send(JSON.stringify({ type: 'stop_vote'}));
         }
     };
 
@@ -235,6 +263,17 @@ function App() {
         
         <div className="container">
             <h2>Manage Voting Choices</h2>
+            <div className='time-container'>
+                <p>vote time:</p>
+                <input 
+                    className="text-input"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={voteTime}
+                    onChange={handleChange}
+                />
+            </div>
             {choices.map((choice, index) => (
                 <div key={index} className="choice-container">
                     <input
@@ -271,6 +310,9 @@ function App() {
             </button>
             <button onClick={() => alertUsers("start voting!")} className="alert-button">
                 Vote!
+            </button>
+            <button onClick={stopVote} className="alert-button">
+                Stop Vote
             </button>
 
         </div>

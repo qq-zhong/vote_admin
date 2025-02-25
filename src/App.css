@@ -29,3 +29,10 @@
 .update-button:hover {
   background-color: #0056b3;
 }
+
+.time-container {
+  display: flex;
+  align-items: center; /* Aligns items vertically */
+  /* justify-content: left; */
+  gap: 10px; /* Adds spacing between the text and input */
+}
