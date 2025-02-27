@@ -139,7 +139,7 @@ function App() {
     // Send alert to all users
     const alertUsers = (message: string) => {
         if (ws) {
-            ws.send(JSON.stringify({ type: 'alert', message: message }));
+            ws.send(JSON.stringify({ type: 'alert', message: message, time: voteTime }));
         }
     };
 
