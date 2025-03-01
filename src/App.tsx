@@ -10,7 +10,7 @@ function App() {
     
     const [choices, setChoices] = useState<Choice[]>(Array(12).fill({ label: '', enabled: false }));
     const [ws, setWs] = useState<WebSocket | null>(null);
-    const [voteTime, setVoteTime] = useState<number | "">(30);
+    const [voteTime, setVoteTime] = useState<number | "">('');
     // const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
     // const ws = new WebSocket("ws://localhost:8080?role=admin");
@@ -301,10 +301,10 @@ function App() {
             ))}
             {/* <button onClick={clearDatabase} className="update-button">
             Clear Database
-            </button> */}
+            </button> 
             <button onClick={sendResults} className="update-button">
             Send Results
-            </button>
+            </button>*/}
             <button onClick={updateChoices} className="update-button">
                 Update Choices
             </button>
