@@ -36,3 +36,10 @@
   /* justify-content: left; */
   gap: 10px; /* Adds spacing between the text and input */
 }
+
+.role-container {
+  display: flex;
+  align-items: center; /* Aligns items vertically */
+  /* justify-content: left; */
+  gap: 10px; /* Adds spacing between the text and input */
+}

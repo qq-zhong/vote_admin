@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
+import { useRef } from "react";
+
 import './App.css';
+import LoginContainer from './Login/LoginContainer';
+
+// const serverAddress = "wss://peterzhong.ca:2096?role=admin"
 
 interface Choice {
     label: string;
     enabled: boolean;
 }
 
+// todo: track number of visiting users
+// todo: submit password to server
+
 function App() {
     
     const [choices, setChoices] = useState<Choice[]>(Array(12).fill({ label: '', enabled: false }));
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [voteTime, setVoteTime] = useState<number | "">('');
+    // const [shouldReconnect, setShouldReconnect] = useState(true);
+    const shouldReconnectRef = useRef(true); // Use ref instead of state
+
     // const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
 
     // const ws = new WebSocket("ws://localhost:8080?role=admin");
@@ -22,17 +33,15 @@ function App() {
         console.log("old cookie is : ", document.cookie)
         console.log("App component rendered");
         
-        const serverAddress = "wss://peterzhong.ca:2096?role=admin"
+        
         // const socket = new WebSocket(serverAddress);
         const cookie = encodeURIComponent(document.cookie);
         const socket = new WebSocket(`wss://peterzhong.ca:2096?role=admin&cookie=${cookie}`);
+        const reconnectString = `wss://peterzhong.ca:2096?role=admin&cookie=${cookie}`;
 
         let userID = getCookie("userID");
 
-        socket.onopen = () => {
-            console.log("WebSocket connected.");
-            keepAlive();
-        };
+        socketPrep(socket, userID, reconnectString);
 
         // socket.onmessage = (event) => {
         //     const data = JSON.parse(event.data);
@@ -45,6 +54,25 @@ function App() {
         //         socket.close();
         //     }
         // };
+
+        
+
+        // Clean up on component unmount
+        return () => {
+            if (ws) {
+                ws.close();
+            }
+        };
+
+        
+    }, []);
+
+    const socketPrep = (socket: WebSocket, userID: string|null, recString : string) =>{
+
+        socket.onopen = () => {
+            console.log("WebSocket connected.");
+            keepAlive();
+        };
 
         socket.onmessage = (event) => {
             let msg = JSON.parse(event.data);
@@ -74,18 +102,12 @@ function App() {
 
         socket.onclose = () => {
             console.log("WebSocket connection closed.");
-            reconnect(); // Try to reconnect
-            // setIsLoggedIn(false);
+            if (shouldReconnectRef.current) {
+                reconnect(recString); // Only reconnect if the user didn't manually close it
+            }
         };
 
         setWs(socket);
-
-        // Clean up on component unmount
-        return () => {
-            if (socket) {
-                socket.close();
-            }
-        };
 
         function keepAlive() {
             setInterval(() => {
@@ -96,13 +118,32 @@ function App() {
             }, 30000); // Send ping every 30 seconds
         }
     
-        function reconnect() {
+        function reconnect(address : string) {
+            console.log("should reconnect ref is: ", shouldReconnectRef);
             setTimeout(() => {
                 console.log("Reconnecting WebSocket...");
-                setWs(new WebSocket(serverAddress)); // Recreate the connection
+                setWs(new WebSocket(address)); // Recreate the connection
             }, 5000); // Try reconnecting after 5 seconds
         }
-    }, []);
+    }
+
+    const connectWebSocket = (password: string) => {
+        shouldReconnectRef.current = false; // Immediately disable reconnection
+        if (ws) ws.close(); // Manually close existing connection
+
+        setTimeout(() => {
+            // setShouldReconnect(true); // Allow reconnection for the new connection
+            const cookie = encodeURIComponent(document.cookie);
+            const role = encodeURIComponent(password);
+            const socket = new WebSocket(`wss://peterzhong.ca:2096?role=${role}&cookie=${cookie}`);
+            const recString = `wss://peterzhong.ca:2096?role=${role}&cookie=${cookie}`;
+    
+            socketPrep(socket, cookie, recString);
+            setTimeout(() => {
+                shouldReconnectRef.current = true; // Re-enable reconnection **AFTER** WebSocket reconnects
+            }, 6000);
+        }, 1000); // Delay to avoid race conditions
+    };
 
     // Send clear database request to WebSocket server
     // const clearDatabase = () => {
@@ -130,11 +171,11 @@ function App() {
         }
     };
 
-    const sendResults = () =>{
-        if (ws){
-            ws.send(JSON.stringify({ type: 'send_results' }));
-        }
-    }
+    // const sendResults = () =>{
+    //     if (ws){
+    //         ws.send(JSON.stringify({ type: 'send_results' }));
+    //     }
+    // }
 
     // Send alert to all users
     const alertUsers = (message: string) => {
@@ -147,12 +188,12 @@ function App() {
         console.log("STOP!")
         // const inputElement = document.getElementById("numericInput");
         // const inputValue = voteTime; // Gets the input value as a string
-        if (voteTime == ""){
-            console.log("infinite time")
-        }
-        else {
-            console.log("time given is :", voteTime);
-        }
+        // if (voteTime == ""){
+        //     console.log("infinite time")
+        // }
+        // else {
+        //     console.log("time given is :", voteTime);
+        // }
         if (ws) {
             ws.send(JSON.stringify({ type: 'stop_vote'}));
         }
@@ -263,6 +304,20 @@ function App() {
         
         <div className="container">
             <h2>Manage Voting Choices</h2>
+            {/* <div className='role-container'>
+                <p>super user password:</p>
+                <input 
+                    className="text-input"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={voteTime}
+                    onChange={handleChange}
+                />
+                <p id='server_reply'></p>
+            </div> */}
+            {/* <LoginContainer reconnectWebSocket={connectWebSocket} /> */}
+            <LoginContainer reconnectWebSocket={connectWebSocket}/>
             <div className='time-container'>
                 <p>vote time:</p>
                 <input 
