@@ -1,13 +1,11 @@
 # vote_admin
 
-deployment methods were: 
-npm install --save-dev gh-pages
-npm run build
-npx gh-pages -d dist
+voting software developed for the SFU Music Discussion club, with the purpose of replacing straw poll
 
-changes in package.jon
+automatic vote option updates to users
 
-"scripts": {
-  "build": "vite build",
-  "deploy": "gh-pages -d dist"
-}
+use the vote admin page at: 
+https://qq-zhong.github.io/vote_admin/
+
+check out the voter front end and backend code at:
+https://github.com/qq-zhong/vote
