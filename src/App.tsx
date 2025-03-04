@@ -370,6 +370,13 @@ function App() {
                 Stop Vote
             </button>
 
+            {/* GitHub Link */}
+            <div className="footer">
+                <a href="https://github.com/qq-zhong/vote_admin" target="_blank" rel="noopener noreferrer">
+                    View on GitHub
+                </a>
+            </div>
+
         </div>
     );
 }

@@ -43,3 +43,7 @@
   /* justify-content: left; */
   gap: 10px; /* Adds spacing between the text and input */
 }
+
+.footer{
+  padding: 20px;
+}
