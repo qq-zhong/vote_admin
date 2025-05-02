@@ -22,10 +22,12 @@ function App() {
         console.log("old cookie is : ", document.cookie)
         console.log("App component rendered");
         
-        const serverAddress = "wss://peterzhong.ca:2096?role=admin"
+        // const serverAddress = "wss://peterzhong.ca:2096?role=admin"
+        const serverAddress = "wss://209.121.228.173:2096?role=admin"
         // const socket = new WebSocket(serverAddress);
         const cookie = encodeURIComponent(document.cookie);
-        const socket = new WebSocket(`wss://peterzhong.ca:2096?role=admin&cookie=${cookie}`);
+        // const socket = new WebSocket(`wss://peterzhong.ca:2096?role=admin&cookie=${cookie}`);
+        const socket = new WebSocket(`wss://209.121.228.173:2096?role=admin&cookie=${cookie}`);
 
         let userID = getCookie("userID");
 
